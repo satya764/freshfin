@@ -48,6 +48,7 @@ too, except two growth questions where it estimated from company guidance and sa
 **With a lookup tool, all three are reliable, and the misses are tool-use mistakes.** Both Claude models got
 78/78. Qwen3 got 73/78: it copied Meta's net income with an extra zero ($98.6B for $9.86B), and for three
 Mastercard questions it looked up the wrong ticker (MSTR, MRK, MC), found nothing that matched, and said so.
+One answer came back empty.
 
 **Cost.** All 234 answers cost $0.05 on Haiku and $0.88 on Sonnet, 18x more for the same result. Qwen3 is free
 but took up to 88 seconds per answer on a MacBook.
