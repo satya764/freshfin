@@ -46,7 +46,7 @@
       "filed": "2026-10-28",
       "accession": "0001193125-26-436133",
       "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/",
-      "questions": 6
+      "questions": 8
     },
     {
       "ticker": "AMZN",
@@ -54,7 +54,7 @@
       "filed": "2026-10-30",
       "accession": "0001018724-26-000040",
       "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/",
-      "questions": 6
+      "questions": 8
     },
     {
       "ticker": "GOOGL",
@@ -62,7 +62,7 @@
       "filed": "2026-10-29",
       "accession": "0001652044-26-000084",
       "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/",
-      "questions": 6
+      "questions": 8
     },
     {
       "ticker": "META",
@@ -70,7 +70,7 @@
       "filed": "2026-10-22",
       "accession": "0001628280-26-066773",
       "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/",
-      "questions": 6
+      "questions": 8
     },
     {
       "ticker": "TSLA",
@@ -78,7 +78,7 @@
       "filed": "2026-10-22",
       "accession": "0001628280-26-066775",
       "url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/",
-      "questions": 6
+      "questions": 8
     },
     {
       "ticker": "INTC",
@@ -86,7 +86,7 @@
       "filed": "2026-10-30",
       "accession": "0000050863-26-000191",
       "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000191/",
-      "questions": 6
+      "questions": 8
     },
     {
       "ticker": "NFLX",
@@ -94,7 +94,7 @@
       "filed": "2026-10-21",
       "accession": "0001065280-26-000291",
       "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/",
-      "questions": 6
+      "questions": 8
     },
     {
       "ticker": "MA",
@@ -102,7 +102,7 @@
       "filed": "2026-10-29",
       "accession": "0001141391-26-000124",
       "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000124/",
-      "questions": 6
+      "questions": 8
     },
     {
       "ticker": "PG",
@@ -110,7 +110,7 @@
       "filed": "2026-10-22",
       "accession": "0000080424-26-000256",
       "url": "https://www.sec.gov/Archives/edgar/data/80424/000008042426000256/",
-      "questions": 6
+      "questions": 8
     },
     {
       "ticker": "KO",
@@ -118,7 +118,7 @@
       "filed": "2026-10-28",
       "accession": "0001628280-26-067844",
       "url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/",
-      "questions": 6
+      "questions": 8
     },
     {
       "ticker": "JNJ",
@@ -126,7 +126,7 @@
       "filed": "2026-10-21",
       "accession": "0000200406-26-000197",
       "url": "https://www.sec.gov/Archives/edgar/data/200406/000020040626000197/",
-      "questions": 6
+      "questions": 8
     },
     {
       "ticker": "LLY",
@@ -134,7 +134,7 @@
       "filed": "2026-10-29",
       "accession": "0000059478-26-000108",
       "url": "https://www.sec.gov/Archives/edgar/data/59478/000005947826000108/",
-      "questions": 6
+      "questions": 8
     },
     {
       "ticker": "BA",
@@ -142,9 +142,9 @@
       "filed": "2026-10-27",
       "accession": "0001628280-26-067508",
       "url": "https://www.sec.gov/Archives/edgar/data/12927/000162828026067508/",
-      "questions": 6
+      "questions": 8
     }
   ],
   "skipped": [],
-  "questions": 78
+  "questions": 104
 }

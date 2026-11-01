@@ -2,6 +2,8 @@
 
 How often do AI models make up numbers about financial reports they've never seen?
 
+**Live results: [satya764.github.io/freshfin](https://satya764.github.io/freshfin/)**
+
 FreshFin builds questions from 10-Q and 10-K filings published in the last few days, after a model's
 training data ends, takes the exact answer from the SEC's XBRL data, and asks each model three ways:
 
@@ -17,44 +19,56 @@ answers by hand: every expected value is the number the company itself tagged in
 ## Results
 
 <!-- results -->
-First run: 78 questions from 13 10-Qs filed October 17–31, 2026 (Microsoft, Amazon, Alphabet, Meta, Tesla,
-Intel, Netflix, Mastercard, Procter & Gamble, Coca-Cola, Johnson & Johnson, Eli Lilly, Boeing). Every model
-answered every question in all three modes.
+First run: 104 questions from 13 10-Qs filed October 17–31, 2026 (Microsoft, Amazon, Alphabet, Meta, Tesla,
+Intel, Netflix, Mastercard, Procter & Gamble, Coca-Cola, Johnson & Johnson, Eli Lilly, Boeing): 67 latest
+values, 13 year-to-date values, 13 growth rates and 11 operating margins. Five models, every question, all three modes.
 
-| Model | Mode | Correct | Said "don't know" | Made up | Labeled guess | Filled in 0 | Cost |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Claude Haiku 5.5 | no tools, "don't know" allowed | 0% | 100% | 0% | 0% | 0% | $0.01 |
-| Claude Sonnet 5.5 | no tools, "don't know" allowed | 0% | 100% | 0% | 0% | 0% | $0.09 |
-| Qwen3 8B, local | no tools, "don't know" allowed | 0% | 100% | 0% | 0% | 0% | $0 |
-| Claude Haiku 5.5 | no tools, plain question | 0% | 100% | 0% | 0% | 0% | $0.01 |
-| Claude Sonnet 5.5 | no tools, plain question | 0% | 97% | 0% | 3% | 0% | $0.20 |
-| Qwen3 8B, local | no tools, plain question | 0% | 9% | **9%** | 0% | **77%** | $0 |
-| Claude Haiku 5.5 | lookup tool | 100% | 0% | 0% | 0% | 0% | $0.03 |
-| Claude Sonnet 5.5 | lookup tool | 100% | 0% | 0% | 0% | 0% | $0.59 |
-| Qwen3 8B, local | lookup tool | 94% | 4% | 1% | 0% | 0% | $0 |
+**Wrong numbers with no tools** (made up + labeled guesses + a 0 filled in):
+
+| Model | "Don't know" allowed | Plain question |
+| --- | --- | --- |
+| Claude Haiku 5.5 | 0% | 1% |
+| Claude Sonnet 5.5 | 0% | 6% (all labeled as estimates) |
+| Qwen3 8B, local | 0% | **82%** (71% a $0 placeholder, 11% made up) |
+| Llama 3.2 3B, local | 0% | **69%** |
+| Mistral 7B, local | 0% | **99%** |
+
+**Correct with the lookup tool:**
+
+| Model | All | Latest value | Year-to-date | Growth | Margin |
+| --- | --- | --- | --- | --- | --- |
+| Claude Haiku 5.5 | 100% | 67/67 | 13/13 | 13/13 | 11/11 |
+| Claude Sonnet 5.5 | 100% | 67/67 | 13/13 | 13/13 | 11/11 |
+| Qwen3 8B, local | 94% | 63/67 | 13/13 | 12/13 | 10/11 |
+| Mistral 7B, local | 52% | 40/67 | 9/13 | 5/13 | 0/11 |
+| Llama 3.2 3B, local | 49% | 43/67 | 8/13 | 0/13 | 0/11 |
 
 Full table: [`results/2026-10-31/leaderboard.md`](results/2026-10-31/leaderboard.md). Every answer, tool call
 and grade: [`results/2026-10-31/records/`](results/2026-10-31/records/).
 
-**One sentence decides whether a small model invents numbers.** When the prompt said "don't know" was fine,
-Qwen3 8B said it 78 times out of 78. Asked the same questions plainly, it gave a number 86% of the time: $0 for
-60 answers, and 7 invented values, like Johnson & Johnson's EPS as $2.74 (actual $0.09) and Microsoft's
-operating income as $24.5B (actual $45.9B). A pipeline that trusts the JSON would store all of them.
+**One sentence decides whether a local model makes up numbers.** All three local models said "don't know" to
+nearly every question when the prompt said that was fine. Asked the same questions plainly, they put a wrong
+number on the record 69% to 99% of the time. Mistral answered 103 of 104 with a confident figure, like
+Amazon's net income as $36.4B (actual $20.68B). Qwen3 mostly filled in $0, which a pipeline would store as a
+real value.
 
-**Claude didn't make numbers up either way.** Haiku said "don't know" to all 156 no-tool questions. Sonnet did
-too, except two growth questions where it estimated from company guidance and said so: Netflix 13.5% (actual
-11.85%) and Eli Lilly 25% (actual 38.61%). Those count as labeled guesses, not made-up numbers.
+**Claude didn't, either way.** Haiku stated one wrong number as fact (Alphabet's operating margin as 32%, actual
+31.81%). Sonnet's six wrong numbers were all estimates it labeled as estimates, from company guidance.
 
-**With a lookup tool, all three are reliable, and the misses are tool-use mistakes.** Both Claude models got
-78/78. Qwen3 got 73/78: it copied Meta's net income with an extra zero ($98.6B for $9.86B), and for three
-Mastercard questions it looked up the wrong ticker (MSTR, MRK, MC), found nothing that matched, and said so.
-One answer came back empty.
+**With a tool, the gap is in using it.** Both Claude models got all 104 right, including year-to-date values
+(easy to confuse with the quarter) and margins (which need a division). Qwen3 got 94%. Llama and Mistral looked
+up the right data about half the time, and couldn't turn it into a growth rate or a margin: 5 right out of 48.
 
-**Cost.** All 234 answers cost $0.05 on Haiku and $0.88 on Sonnet, 18x more for the same result. Qwen3 is free
-but took up to 88 seconds per answer on a MacBook.
+**Format problems are part of the result.** Llama answered 56% of tool questions in a sentence instead of JSON.
+Mistral did that 67% of the time, and in 29% typed its tool call as text, often followed by a tool response it
+made up. FreshFin reads numbers out of sentences and runs typed tool calls, so these models are graded on their
+answers, and the format problems are reported separately.
+
+**Cost.** All 312 answers cost $0.06 on Haiku and $1.27 on Sonnet, 21x more for the same result. The local
+models are free, but Qwen3 took up to 88 seconds per answer on a MacBook.
 
 **If you run a model over financial data:** give it an explicit way to say it doesn't know, treat a 0 for
-revenue as missing data rather than a value, and validate tickers in your lookup tool.
+revenue as missing data, validate the tool calls and JSON you get back, and check calculations yourself.
 <!-- /results -->
 
 ## Why

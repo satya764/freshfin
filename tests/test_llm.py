@@ -70,3 +70,22 @@ def test_anthropic_needs_key():
 
     with pytest.raises(ValueError):
         llm.AnthropicClient("")
+
+
+def test_tool_call_typed_as_text_is_run_and_the_made_up_response_dropped(monkeypatch):
+    text = (
+        '[{"name":"get_reported_values","arguments":{"ticker":"MSFT","metric":"revenue"}}]\n\nResponse:\n{"value": 1}'
+    )
+
+    def fake_post(url, body, headers, timeout, retries=4):
+        return {"choices": [{"message": {"content": text}}], "usage": {}}
+
+    monkeypatch.setattr(llm, "post_json", fake_post)
+    tool = {"name": "get_reported_values", "description": "d", "input_schema": {"type": "object"}}
+    reply = llm.OpenAICompatibleClient("http://x/v1").start("mistral-16k", "sys", "q", [tool]).step()
+    assert reply.calls_from_text and reply.text == ""
+    assert reply.tool_calls[0].args == {"ticker": "MSFT", "metric": "revenue"}
+
+
+def test_text_tool_calls_ignores_unknown_names():
+    assert llm.text_tool_calls('{"name": "other", "arguments": {}}', {"get_reported_values"}) == []

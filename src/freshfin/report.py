@@ -10,7 +10,7 @@ from pathlib import Path
 from .config import ModelSpec
 from .questions import Question, read_questions
 from .runner import MODES, Record, read_records, records_path
-from .scoring import grade
+from .scoring import grade, parse_answer
 
 
 @dataclass
@@ -30,6 +30,8 @@ class Row:
     cost_usd: float
     p50_s: float
     p95_s: float
+    prose: float = 0.0  # answers written as a sentence instead of the requested JSON
+    text_calls: float = 0.0  # questions where the model typed a tool call as text instead of calling it
 
 
 def _pct(n: int, d: int) -> float:
@@ -67,6 +69,8 @@ def summarize(records: list[Record], spec: ModelSpec, mode: str) -> Row | None:
         cost_usd=round(sum(r.cost_usd for r in records), 4),
         p50_s=_quantile([r.latency_ms for r in graded], 0.5),
         p95_s=_quantile([r.latency_ms for r in graded], 0.95),
+        prose=_pct(sum(parse_answer(r.answer_text).prose for r in graded), n),
+        text_calls=_pct(sum(any(c.get("from_text") for c in r.tool_calls) for r in graded), n),
     )
 
 
@@ -118,6 +122,39 @@ def hallucination_examples(by_key, questions: dict[str, Question], labels: dict[
     return out
 
 
+QUESTION_TYPES = ("latest value", "year-to-date", "growth", "margin")
+
+
+def question_type(q: Question) -> str:
+    if q.kind != "lookup":
+        return q.kind
+    if q.period_start is not None and (q.period_end - q.period_start).days > 100:
+        return "year-to-date"
+    return "latest value"
+
+
+def tool_accuracy_by_type(by_key, questions: dict[str, Question], labels: dict[str, str]) -> list[dict]:
+    """Correct answers with the lookup tool, split by question type: where tool use goes wrong."""
+    out = []
+    for (model, mode), records in sorted(by_key.items()):
+        if mode != "tool":
+            continue
+        row: dict = {"model": labels[model]}
+        for t in QUESTION_TYPES:
+            graded = [
+                r
+                for r in records
+                if r.outcome != "error" and r.question_id in questions and question_type(questions[r.question_id]) == t
+            ]
+            row[t] = {"correct": sum(r.outcome == "correct" for r in graded), "total": len(graded)}
+        out.append(row)
+    return out
+
+
+def _cell(c: dict) -> str:
+    return f"{c['correct']}/{c['total']}" if c["total"] else "–"
+
+
 def fmt_value(value: float | None, unit: str) -> str:
     if value is None:
         return "–"
@@ -144,7 +181,7 @@ def _sort(rows: list[Row]) -> list[Row]:
     return sorted(rows, key=lambda r: (MODE_ORDER.get(r.mode, 9), r.hallucinated, r.label))
 
 
-def to_markdown(rows: list[Row], meta: dict, examples: list[dict]) -> str:
+def to_markdown(rows: list[Row], meta: dict, examples: list[dict], by_type: list[dict] | None = None) -> str:
     lines = [
         f"# FreshFin results: filings from {meta['since']} to {meta['until']}",
         "",
@@ -160,6 +197,29 @@ def to_markdown(rows: list[Row], meta: dict, examples: list[dict]) -> str:
             f"| {r.label} | {mode} | {r.correct:.0f}% | {r.abstained:.0f}% | **{r.hallucinated:.0f}%** | "
             f"{r.estimated:.0f}% | {r.placeholder:.0f}% | {r.invalid:.0f}% | {precision} | ${r.cost_usd:.2f} | {r.p95_s:.1f} s |"
         )
+    issues = [r for r in _sort(rows) if r.prose or r.text_calls]
+    if issues:
+        lines += [
+            "",
+            "## Format problems",
+            "",
+            "Answers in a sentence are read for a dollar amount or percent; tool calls typed as text are run.",
+            "",
+            "| Model | Mode | Answered in a sentence | Typed the tool call as text |",
+            "| --- | --- | --- | --- |",
+        ]
+        for r in issues:
+            lines.append(f"| {r.label} | {MODE_LABELS.get(r.mode, r.mode)} | {r.prose:.0f}% | {r.text_calls:.0f}% |")
+    if by_type:
+        lines += [
+            "",
+            "## With the lookup tool, by question type",
+            "",
+            "| Model | " + " | ".join(t.capitalize() for t in QUESTION_TYPES) + " |",
+            "| --- |" + " --- |" * len(QUESTION_TYPES),
+        ]
+        for b in by_type:
+            lines.append(f"| {b['model']} | " + " | ".join(_cell(b[t]) for t in QUESTION_TYPES) + " |")
     if examples:
         lines += [
             "",
@@ -220,6 +280,8 @@ footer {{ margin-top:40px; font-size:14px; color:var(--muted) }}
 <tr><th>Model</th><th>Mode</th><th class="num">Correct</th><th class="num">Don't know</th><th class="num">Made up</th><th class="num">Labeled guess</th><th class="num">Filled in 0</th><th class="num">Right when answered</th><th class="num">Cost</th><th class="num">p95</th></tr>
 {rows}
 </table></div>
+{by_type}
+{issues}
 {examples}
 <footer>Questions and answers are generated from SEC EDGAR XBRL data. Source and method: <a href="https://github.com/satya764/freshfin">github.com/satya764/freshfin</a>. Updated {updated}.</footer>
 </main>
@@ -257,7 +319,7 @@ def cards_html(rows: list[Row]) -> str:
     return "".join(out)
 
 
-def to_html(rows: list[Row], meta: dict, examples: list[dict], updated: str) -> str:
+def to_html(rows: list[Row], meta: dict, examples: list[dict], updated: str, by_type: list[dict] | None = None) -> str:
     e = html.escape
     intro = (
         f"Every question comes from a 10-Q or 10-K filed between {meta['since']} and {meta['until']}. "
@@ -289,7 +351,44 @@ def to_html(rows: list[Row], meta: dict, examples: list[dict], updated: str) -> 
             '<div class="wrap"><table><tr><th>Model</th><th>Type</th><th>Question</th>'
             f"<th class=num>Said</th><th class=num>Filing says</th></tr>{items}</table></div>"
         )
-    return PAGE.format(intro=e(intro), cards=cards_html(rows), rows="\n".join(body), examples=ex, updated=e(updated))
+    bt = ""
+    if by_type:
+        head = "".join(f"<th class=num>{e(t.capitalize())}</th>" for t in QUESTION_TYPES)
+        trs = "".join(
+            f"<tr><td class=model>{e(b['model'])}</td>"
+            + "".join(f"<td class=num>{_cell(b[t])}</td>" for t in QUESTION_TYPES)
+            + "</tr>"
+            for b in by_type
+        )
+        bt = (
+            "<h2>With the lookup tool, by question type</h2><p>Year-to-date questions test whether the model picks "
+            "the right period; growth and margin need a calculation.</p>"
+            f'<div class="wrap"><table><tr><th>Model</th>{head}</tr>{trs}</table></div>'
+        )
+    iss = ""
+    issue_rows = [r for r in _sort(rows) if r.prose or r.text_calls]
+    if issue_rows:
+        trs = "".join(
+            f"<tr><td class=model>{e(r.label)}</td><td class=mode>{e(MODE_LABELS.get(r.mode, r.mode))}</td>"
+            f"<td class=num>{r.prose:.0f}%</td><td class=num>{r.text_calls:.0f}%</td></tr>"
+            for r in issue_rows
+        )
+        iss = (
+            "<h2>Format problems</h2><p>Some models answer in a sentence instead of JSON, or type a tool call as "
+            "text instead of making one. Sentences are read for a dollar amount or percent, and typed tool calls "
+            "are run, so these models are graded on their answers, not their formatting.</p>"
+            '<div class="wrap"><table><tr><th>Model</th><th>Mode</th><th class=num>Answered in a sentence</th>'
+            f"<th class=num>Typed the tool call as text</th></tr>{trs}</table></div>"
+        )
+    return PAGE.format(
+        intro=e(intro),
+        cards=cards_html(rows),
+        rows="\n".join(body),
+        by_type=bt,
+        issues=iss,
+        examples=ex,
+        updated=e(updated),
+    )
 
 
 def write_report(run_dir: Path, models: dict[str, ModelSpec], pages_dir: Path | None, updated: str) -> list[Row]:
@@ -298,11 +397,11 @@ def write_report(run_dir: Path, models: dict[str, ModelSpec], pages_dir: Path | 
     rows, by_key = collect(run_dir, models, questions)
     labels = {s.name: s.label for s in models.values()}
     examples = hallucination_examples(by_key, questions, labels)
-    (run_dir / "summary.json").write_text(
-        json.dumps({"meta": meta, "rows": [asdict(r) for r in rows], "examples": examples}, indent=2) + "\n"
-    )
-    (run_dir / "leaderboard.md").write_text(to_markdown(rows, meta, examples))
+    by_type = tool_accuracy_by_type(by_key, questions, labels)
+    summary = {"meta": meta, "rows": [asdict(r) for r in rows], "by_type": by_type, "examples": examples}
+    (run_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+    (run_dir / "leaderboard.md").write_text(to_markdown(rows, meta, examples, by_type))
     if pages_dir is not None:
         pages_dir.mkdir(parents=True, exist_ok=True)
-        (pages_dir / "index.html").write_text(to_html(rows, meta, examples, updated))
+        (pages_dir / "index.html").write_text(to_html(rows, meta, examples, updated, by_type))
     return rows

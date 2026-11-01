@@ -30,9 +30,9 @@ def test_prior_year_value_uses_same_period_length():
 
 
 def test_questions_for_filing():
-    qs = questions_for_filing(msft_facts(), msft_q1_filing(), "Microsoft", per_filing=6)
-    assert len(qs) == 6
-    assert len({q.id for q in qs}) == 6
+    qs = questions_for_filing(msft_facts(), msft_q1_filing(), "Microsoft")
+    assert len(qs) == 8
+    assert len({q.id for q in qs}) == 8
     first = qs[0]
     assert first.question == (
         "What was Microsoft's revenue for the three months ended September 30, 2026, "
@@ -43,6 +43,40 @@ def test_questions_for_filing():
     assert len(growth) == 1 and growth[0].unit == "percent" and growth[0].answer == 18.8
     assets = next(q for q in qs if q.metric == "total_assets")
     assert "were Microsoft's total assets as of September 30, 2026" in assets.question
+
+
+def test_operating_margin_question():
+    qs = questions_for_filing(msft_facts(), msft_q1_filing(), "Microsoft")
+    margin = next(q for q in qs if q.kind == "margin")
+    assert margin.answer == round(45_915_000_000 / 92_279_000_000 * 100, 2)
+    assert "operating margin (operating income as a percent of revenue)" in margin.question
+
+
+def test_year_to_date_question_when_the_filing_has_one():
+    facts = msft_facts()
+    filing = msft_q1_filing()
+    # Add a nine-month revenue fact to the same filing, as a Q3 10-Q would have.
+    entries = facts["facts"]["us-gaap"]["RevenueFromContractWithCustomerExcludingAssessedTax"]["units"]["USD"]
+    entries.append(
+        {
+            "start": "2026-01-01",
+            "end": "2026-09-30",
+            "val": 250_000_000_000,
+            "accn": filing.accession,
+            "form": "10-Q",
+            "filed": "2026-10-28",
+        }
+    )
+    ytd = [q for q in questions_for_filing(facts, filing, "Microsoft") if q.id.endswith("-9m-lookup")]
+    assert len(ytd) == 1 and ytd[0].answer == 250_000_000_000
+    assert "nine months ended September 30, 2026" in ytd[0].question
+
+
+def test_earlier_question_ids_stay_the_same():
+    """Growing the question set must keep old ids, so finished runs resume instead of starting over."""
+    six = {q.id for q in questions_for_filing(msft_facts(), msft_q1_filing(), "Microsoft", per_filing=6)}
+    eight = {q.id for q in questions_for_filing(msft_facts(), msft_q1_filing(), "Microsoft", per_filing=8)}
+    assert six <= eight
 
 
 def test_per_filing_limit():

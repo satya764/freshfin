@@ -34,5 +34,5 @@ def test_example_file_loads():
     from pathlib import Path
 
     models = load_models(Path(__file__).parent.parent / "models.example.toml")
-    assert set(models) == {"claude-haiku-5-5", "claude-sonnet-5-5", "qwen3-16k"}
+    assert set(models) == {"claude-haiku-5-5", "claude-sonnet-5-5", "qwen3-16k", "llama3.2-16k", "mistral-16k"}
     assert all(isinstance(m, ModelSpec) for m in models.values())

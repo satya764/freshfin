@@ -69,3 +69,14 @@ def test_cards_sum_every_kind_of_wrong_number():
     tool = Row("q", "Qwen", "tool", 78, 94, 4, 1, 0, 0, 1, 0, 99.0, 0.0, 1.0, 2.0)
     page = cards_html([plain, tool])
     assert '<b class="bad">86%</b>' in page and "<b>94%</b>" in page
+
+
+def test_question_types():
+    from freshfin.report import question_type
+
+    qs = {
+        q.kind + str((q.period_end - q.period_start).days if q.period_start else 0): q
+        for q in questions_for_filing(msft_facts(), msft_q1_filing(), "Microsoft")
+    }
+    kinds = {question_type(q) for q in qs.values()}
+    assert {"latest value", "growth", "margin"} <= kinds

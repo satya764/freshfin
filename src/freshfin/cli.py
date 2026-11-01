@@ -120,7 +120,7 @@ def main(argv: list[str] | None = None) -> int:
     b.add_argument("--until", type=_date, help="last filing date (default: today)")
     b.add_argument("--days", type=int, default=14)
     b.add_argument("--tickers", nargs="*", help="default: the built-in list of large companies")
-    b.add_argument("--per-filing", type=int, default=6)
+    b.add_argument("--per-filing", type=int, default=8)
     b.add_argument("--out", type=Path, help="run folder (default: results/<until>)")
     b.set_defaults(func=cmd_build)
 

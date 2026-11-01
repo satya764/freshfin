@@ -27,10 +27,20 @@ PCT_TOLERANCE = 0.15  # growth: within 0.15 percentage points
 SCALES = (1e3, 1e6, 1e9)  # thousands, millions, billions
 
 ABSTAIN_PATTERN = re.compile(
-    r"\b(don't know|do not know|not (?:yet )?available|no (?:reliable )?information|cannot (?:find|provide|determine)"
-    r"|unable to|not able to|unknown|beyond my|after my (?:knowledge|training))\b",
+    r"\b(don't know|do not know|not (?:yet )?available|no (?:reliable )?information|not enough information"
+    r"|(?:cannot|can't|can not) (?:find|provide|determine|answer|give)|unable to|not able to|unknown|beyond my"
+    r"|after my (?:knowledge|training))\b",
     re.I,
 )
+
+# A number in a sentence: "$36,629,000,000", "$45.5 billion", "18.8%". Bare numbers are skipped,
+# since prose is full of dates ("September 30, 2026").
+PROSE_NUMBER = re.compile(
+    r"(?:\$|\bUSD)\s?(?P<num>-?\d[\d,]*(?:\.\d+)?)\s*(?P<scale>trillion|billion|million|thousand)?"
+    r"|(?P<num2>-?\d[\d,]*(?:\.\d+)?)\s*(?P<unit2>%|percent|trillion|billion|million|USD\b)",
+    re.I,
+)
+SCALE_WORDS = {"trillion": 1e12, "billion": 1e9, "million": 1e6, "thousand": 1e3}
 
 
 ESTIMATE_PATTERN = re.compile(
@@ -45,6 +55,7 @@ class Parsed:
     value: float | None
     abstained: bool
     readable: bool
+    prose: bool = False  # answered in a sentence instead of the requested JSON
 
 
 def _strip_thinking(text: str) -> str:
@@ -77,6 +88,20 @@ def _json_object(text: str) -> dict | None:
     return None
 
 
+def _prose_number(text: str) -> float | None:
+    """The last money amount or percent written in a sentence."""
+    found = None
+    for m in PROSE_NUMBER.finditer(text):
+        if m.group("num"):
+            value = float(m.group("num").replace(",", ""))
+            scale = (m.group("scale") or "").lower()
+        else:
+            value = float(m.group("num2").replace(",", ""))
+            scale = m.group("unit2").lower()  # "usd" and "%" have no multiplier
+        found = value * SCALE_WORDS.get(scale, 1)
+    return found
+
+
 def parse_answer(text: str) -> Parsed:
     text = _strip_thinking(text or "")
     obj = _json_object(text)
@@ -89,6 +114,9 @@ def parse_answer(text: str) -> Parsed:
         return Parsed(None, abstained=bool(ABSTAIN_PATTERN.search(text)), readable=False)
     if ABSTAIN_PATTERN.search(text):
         return Parsed(None, abstained=True, readable=True)
+    number = _prose_number(text)
+    if number is not None:
+        return Parsed(number, abstained=False, readable=True, prose=True)
     return Parsed(None, abstained=False, readable=False)
 
 

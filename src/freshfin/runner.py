@@ -165,7 +165,10 @@ def ask(
                     result = lookup(str(call.args.get("ticker", "")), str(call.args.get("metric", "")))
                 else:
                     result = {"error": f"unknown tool {call.name}"}
-                calls.append({"name": call.name, "args": call.args, "ok": "error" not in result})
+                entry = {"name": call.name, "args": call.args, "ok": "error" not in result}
+                if reply.calls_from_text:
+                    entry["from_text"] = True
+                calls.append(entry)
                 results.append((call.id, json.dumps(result)))
             session.add_tool_results(results)
     except LLMError as err:

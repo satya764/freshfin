@@ -47,7 +47,7 @@
         "filed": "2026-10-28",
         "accession": "0001193125-26-436133",
         "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/",
-        "questions": 6
+        "questions": 8
       },
       {
         "ticker": "AMZN",
@@ -55,7 +55,7 @@
         "filed": "2026-10-30",
         "accession": "0001018724-26-000040",
         "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/",
-        "questions": 6
+        "questions": 8
       },
       {
         "ticker": "GOOGL",
@@ -63,7 +63,7 @@
         "filed": "2026-10-29",
         "accession": "0001652044-26-000084",
         "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/",
-        "questions": 6
+        "questions": 8
       },
       {
         "ticker": "META",
@@ -71,7 +71,7 @@
         "filed": "2026-10-22",
         "accession": "0001628280-26-066773",
         "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/",
-        "questions": 6
+        "questions": 8
       },
       {
         "ticker": "TSLA",
@@ -79,7 +79,7 @@
         "filed": "2026-10-22",
         "accession": "0001628280-26-066775",
         "url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/",
-        "questions": 6
+        "questions": 8
       },
       {
         "ticker": "INTC",
@@ -87,7 +87,7 @@
         "filed": "2026-10-30",
         "accession": "0000050863-26-000191",
         "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000191/",
-        "questions": 6
+        "questions": 8
       },
       {
         "ticker": "NFLX",
@@ -95,7 +95,7 @@
         "filed": "2026-10-21",
         "accession": "0001065280-26-000291",
         "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/",
-        "questions": 6
+        "questions": 8
       },
       {
         "ticker": "MA",
@@ -103,7 +103,7 @@
         "filed": "2026-10-29",
         "accession": "0001141391-26-000124",
         "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000124/",
-        "questions": 6
+        "questions": 8
       },
       {
         "ticker": "PG",
@@ -111,7 +111,7 @@
         "filed": "2026-10-22",
         "accession": "0000080424-26-000256",
         "url": "https://www.sec.gov/Archives/edgar/data/80424/000008042426000256/",
-        "questions": 6
+        "questions": 8
       },
       {
         "ticker": "KO",
@@ -119,7 +119,7 @@
         "filed": "2026-10-28",
         "accession": "0001628280-26-067844",
         "url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/",
-        "questions": 6
+        "questions": 8
       },
       {
         "ticker": "JNJ",
@@ -127,7 +127,7 @@
         "filed": "2026-10-21",
         "accession": "0000200406-26-000197",
         "url": "https://www.sec.gov/Archives/edgar/data/200406/000020040626000197/",
-        "questions": 6
+        "questions": 8
       },
       {
         "ticker": "LLY",
@@ -135,7 +135,7 @@
         "filed": "2026-10-29",
         "accession": "0000059478-26-000108",
         "url": "https://www.sec.gov/Archives/edgar/data/59478/000005947826000108/",
-        "questions": 6
+        "questions": 8
       },
       {
         "ticker": "BA",
@@ -143,18 +143,18 @@
         "filed": "2026-10-27",
         "accession": "0001628280-26-067508",
         "url": "https://www.sec.gov/Archives/edgar/data/12927/000162828026067508/",
-        "questions": 6
+        "questions": 8
       }
     ],
     "skipped": [],
-    "questions": 78
+    "questions": 104
   },
   "rows": [
     {
       "model": "claude-haiku-5-5",
       "label": "Claude Haiku 5.5",
       "mode": "closed",
-      "questions": 78,
+      "questions": 104,
       "correct": 0.0,
       "abstained": 100.0,
       "hallucinated": 0.0,
@@ -163,83 +163,36 @@
       "invalid": 0.0,
       "errors": 0,
       "precision": null,
-      "cost_usd": 0.0056,
+      "cost_usd": 0.0074,
       "p50_s": 1.0,
-      "p95_s": 1.7
+      "p95_s": 1.7,
+      "prose": 0.0,
+      "text_calls": 0.0
     },
     {
       "model": "claude-haiku-5-5",
       "label": "Claude Haiku 5.5",
       "mode": "plain",
-      "questions": 78,
+      "questions": 104,
       "correct": 0.0,
-      "abstained": 100.0,
-      "hallucinated": 0.0,
+      "abstained": 99.0,
+      "hallucinated": 1.0,
       "estimated": 0.0,
       "placeholder": 0.0,
       "invalid": 0.0,
       "errors": 0,
-      "precision": null,
-      "cost_usd": 0.012,
-      "p50_s": 1.9,
-      "p95_s": 2.5
-    },
-    {
-      "model": "claude-haiku-5-5",
-      "label": "Claude Haiku 5.5",
-      "mode": "tool",
-      "questions": 78,
-      "correct": 100.0,
-      "abstained": 0.0,
-      "hallucinated": 0.0,
-      "estimated": 0.0,
-      "placeholder": 0.0,
-      "invalid": 0.0,
-      "errors": 0,
-      "precision": 100.0,
-      "cost_usd": 0.0258,
+      "precision": 0.0,
+      "cost_usd": 0.0164,
       "p50_s": 1.8,
-      "p95_s": 3.3
+      "p95_s": 2.7,
+      "prose": 0.0,
+      "text_calls": 0.0
     },
     {
-      "model": "claude-sonnet-5-5",
-      "label": "Claude Sonnet 5.5",
-      "mode": "closed",
-      "questions": 78,
-      "correct": 0.0,
-      "abstained": 100.0,
-      "hallucinated": 0.0,
-      "estimated": 0.0,
-      "placeholder": 0.0,
-      "invalid": 0.0,
-      "errors": 0,
-      "precision": null,
-      "cost_usd": 0.0869,
-      "p50_s": 1.5,
-      "p95_s": 2.0
-    },
-    {
-      "model": "claude-sonnet-5-5",
-      "label": "Claude Sonnet 5.5",
-      "mode": "plain",
-      "questions": 78,
-      "correct": 0.0,
-      "abstained": 97.4,
-      "hallucinated": 0.0,
-      "estimated": 2.6,
-      "placeholder": 0.0,
-      "invalid": 0.0,
-      "errors": 0,
-      "precision": 0.0,
-      "cost_usd": 0.2037,
-      "p50_s": 2.4,
-      "p95_s": 4.1
-    },
-    {
-      "model": "claude-sonnet-5-5",
-      "label": "Claude Sonnet 5.5",
+      "model": "claude-haiku-5-5",
+      "label": "Claude Haiku 5.5",
       "mode": "tool",
-      "questions": 78,
+      "questions": 104,
       "correct": 100.0,
       "abstained": 0.0,
       "hallucinated": 0.0,
@@ -248,15 +201,74 @@
       "invalid": 0.0,
       "errors": 0,
       "precision": 100.0,
-      "cost_usd": 0.5948,
-      "p50_s": 4.1,
-      "p95_s": 7.2
+      "cost_usd": 0.0381,
+      "p50_s": 1.9,
+      "p95_s": 3.3,
+      "prose": 0.0,
+      "text_calls": 0.0
+    },
+    {
+      "model": "claude-sonnet-5-5",
+      "label": "Claude Sonnet 5.5",
+      "mode": "closed",
+      "questions": 104,
+      "correct": 0.0,
+      "abstained": 100.0,
+      "hallucinated": 0.0,
+      "estimated": 0.0,
+      "placeholder": 0.0,
+      "invalid": 0.0,
+      "errors": 0,
+      "precision": null,
+      "cost_usd": 0.1073,
+      "p50_s": 1.5,
+      "p95_s": 1.8,
+      "prose": 0.0,
+      "text_calls": 0.0
+    },
+    {
+      "model": "claude-sonnet-5-5",
+      "label": "Claude Sonnet 5.5",
+      "mode": "plain",
+      "questions": 104,
+      "correct": 0.0,
+      "abstained": 94.2,
+      "hallucinated": 0.0,
+      "estimated": 5.8,
+      "placeholder": 0.0,
+      "invalid": 0.0,
+      "errors": 0,
+      "precision": 0.0,
+      "cost_usd": 0.2816,
+      "p50_s": 2.4,
+      "p95_s": 4.0,
+      "prose": 0.0,
+      "text_calls": 0.0
+    },
+    {
+      "model": "claude-sonnet-5-5",
+      "label": "Claude Sonnet 5.5",
+      "mode": "tool",
+      "questions": 104,
+      "correct": 100.0,
+      "abstained": 0.0,
+      "hallucinated": 0.0,
+      "estimated": 0.0,
+      "placeholder": 0.0,
+      "invalid": 0.0,
+      "errors": 0,
+      "precision": 100.0,
+      "cost_usd": 0.8841,
+      "p50_s": 4.2,
+      "p95_s": 7.5,
+      "prose": 0.0,
+      "text_calls": 0.0
     },
     {
       "model": "qwen3-16k",
       "label": "Qwen3 8B (local)",
       "mode": "closed",
-      "questions": 78,
+      "questions": 104,
       "correct": 0.0,
       "abstained": 100.0,
       "hallucinated": 0.0,
@@ -266,45 +278,272 @@
       "errors": 0,
       "precision": null,
       "cost_usd": 0.0,
-      "p50_s": 13.0,
-      "p95_s": 19.4
+      "p50_s": 12.9,
+      "p95_s": 19.6,
+      "prose": 0.0,
+      "text_calls": 0.0
     },
     {
       "model": "qwen3-16k",
       "label": "Qwen3 8B (local)",
       "mode": "plain",
-      "questions": 78,
+      "questions": 104,
       "correct": 0.0,
-      "abstained": 9.0,
-      "hallucinated": 9.0,
+      "abstained": 9.6,
+      "hallucinated": 10.6,
       "estimated": 0.0,
-      "placeholder": 76.9,
-      "invalid": 5.1,
+      "placeholder": 71.2,
+      "invalid": 8.7,
       "errors": 0,
       "precision": 0.0,
       "cost_usd": 0.0,
-      "p50_s": 49.3,
-      "p95_s": 85.1
+      "p50_s": 51.5,
+      "p95_s": 85.1,
+      "prose": 0.0,
+      "text_calls": 0.0
     },
     {
       "model": "qwen3-16k",
       "label": "Qwen3 8B (local)",
       "mode": "tool",
-      "questions": 78,
-      "correct": 93.6,
+      "questions": 104,
+      "correct": 94.2,
       "abstained": 3.8,
-      "hallucinated": 1.3,
+      "hallucinated": 1.0,
       "estimated": 0.0,
       "placeholder": 0.0,
-      "invalid": 1.3,
+      "invalid": 1.0,
       "errors": 0,
-      "precision": 98.6,
+      "precision": 99.0,
       "cost_usd": 0.0,
-      "p50_s": 35.4,
-      "p95_s": 88.1
+      "p50_s": 35.7,
+      "p95_s": 87.8,
+      "prose": 0.0,
+      "text_calls": 0.0
+    },
+    {
+      "model": "llama3.2-16k",
+      "label": "Llama 3.2 3B (local)",
+      "mode": "closed",
+      "questions": 104,
+      "correct": 0.0,
+      "abstained": 95.2,
+      "hallucinated": 0.0,
+      "estimated": 0.0,
+      "placeholder": 0.0,
+      "invalid": 4.8,
+      "errors": 0,
+      "precision": null,
+      "cost_usd": 0.0,
+      "p50_s": 0.2,
+      "p95_s": 0.3,
+      "prose": 0.0,
+      "text_calls": 0.0
+    },
+    {
+      "model": "llama3.2-16k",
+      "label": "Llama 3.2 3B (local)",
+      "mode": "plain",
+      "questions": 104,
+      "correct": 1.0,
+      "abstained": 14.4,
+      "hallucinated": 67.3,
+      "estimated": 0.0,
+      "placeholder": 1.9,
+      "invalid": 15.4,
+      "errors": 0,
+      "precision": 1.4,
+      "cost_usd": 0.0,
+      "p50_s": 0.3,
+      "p95_s": 0.4,
+      "prose": 0.0,
+      "text_calls": 0.0
+    },
+    {
+      "model": "llama3.2-16k",
+      "label": "Llama 3.2 3B (local)",
+      "mode": "tool",
+      "questions": 104,
+      "correct": 49.0,
+      "abstained": 6.7,
+      "hallucinated": 13.5,
+      "estimated": 0.0,
+      "placeholder": 0.0,
+      "invalid": 30.8,
+      "errors": 0,
+      "precision": 78.5,
+      "cost_usd": 0.0,
+      "p50_s": 1.9,
+      "p95_s": 4.1,
+      "prose": 55.8,
+      "text_calls": 0.0
+    },
+    {
+      "model": "mistral-16k",
+      "label": "Mistral 7B (local)",
+      "mode": "closed",
+      "questions": 104,
+      "correct": 0.0,
+      "abstained": 99.0,
+      "hallucinated": 0.0,
+      "estimated": 0.0,
+      "placeholder": 0.0,
+      "invalid": 1.0,
+      "errors": 0,
+      "precision": null,
+      "cost_usd": 0.0,
+      "p50_s": 0.6,
+      "p95_s": 3.7,
+      "prose": 0.0,
+      "text_calls": 0.0
+    },
+    {
+      "model": "mistral-16k",
+      "label": "Mistral 7B (local)",
+      "mode": "plain",
+      "questions": 104,
+      "correct": 0.0,
+      "abstained": 0.0,
+      "hallucinated": 99.0,
+      "estimated": 0.0,
+      "placeholder": 0.0,
+      "invalid": 1.0,
+      "errors": 0,
+      "precision": 0.0,
+      "cost_usd": 0.0,
+      "p50_s": 1.0,
+      "p95_s": 1.1,
+      "prose": 0.0,
+      "text_calls": 0.0
+    },
+    {
+      "model": "mistral-16k",
+      "label": "Mistral 7B (local)",
+      "mode": "tool",
+      "questions": 104,
+      "correct": 51.9,
+      "abstained": 3.8,
+      "hallucinated": 16.3,
+      "estimated": 9.6,
+      "placeholder": 0.0,
+      "invalid": 18.3,
+      "errors": 0,
+      "precision": 66.7,
+      "cost_usd": 0.0,
+      "p50_s": 10.3,
+      "p95_s": 27.6,
+      "prose": 67.3,
+      "text_calls": 28.8
+    }
+  ],
+  "by_type": [
+    {
+      "model": "Claude Haiku 5.5",
+      "latest value": {
+        "correct": 67,
+        "total": 67
+      },
+      "year-to-date": {
+        "correct": 13,
+        "total": 13
+      },
+      "growth": {
+        "correct": 13,
+        "total": 13
+      },
+      "margin": {
+        "correct": 11,
+        "total": 11
+      }
+    },
+    {
+      "model": "Claude Sonnet 5.5",
+      "latest value": {
+        "correct": 67,
+        "total": 67
+      },
+      "year-to-date": {
+        "correct": 13,
+        "total": 13
+      },
+      "growth": {
+        "correct": 13,
+        "total": 13
+      },
+      "margin": {
+        "correct": 11,
+        "total": 11
+      }
+    },
+    {
+      "model": "Llama 3.2 3B (local)",
+      "latest value": {
+        "correct": 43,
+        "total": 67
+      },
+      "year-to-date": {
+        "correct": 8,
+        "total": 13
+      },
+      "growth": {
+        "correct": 0,
+        "total": 13
+      },
+      "margin": {
+        "correct": 0,
+        "total": 11
+      }
+    },
+    {
+      "model": "Mistral 7B (local)",
+      "latest value": {
+        "correct": 40,
+        "total": 67
+      },
+      "year-to-date": {
+        "correct": 9,
+        "total": 13
+      },
+      "growth": {
+        "correct": 5,
+        "total": 13
+      },
+      "margin": {
+        "correct": 0,
+        "total": 11
+      }
+    },
+    {
+      "model": "Qwen3 8B (local)",
+      "latest value": {
+        "correct": 63,
+        "total": 67
+      },
+      "year-to-date": {
+        "correct": 13,
+        "total": 13
+      },
+      "growth": {
+        "correct": 12,
+        "total": 13
+      },
+      "margin": {
+        "correct": 10,
+        "total": 11
+      }
     }
   ],
   "examples": [
+    {
+      "model": "Claude Haiku 5.5",
+      "mode": "plain",
+      "kind": "made up",
+      "question": "What was Alphabet's operating margin (operating income as a percent of revenue) for the three months ended September 30, 2026, as reported in its 10-Q filed on October 29, 2026?",
+      "said": 32.0,
+      "actual": 31.81,
+      "unit": "percent",
+      "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/"
+    },
     {
       "model": "Claude Sonnet 5.5",
       "mode": "plain",
@@ -319,11 +558,91 @@
       "model": "Claude Sonnet 5.5",
       "mode": "plain",
       "kind": "labeled guess",
-      "question": "By what percent did Netflix's revenue for the three months ended September 30, 2026 change compared with the same period a year earlier, as reported in its 10-Q filed on October 21, 2026?",
-      "said": 13.5,
-      "actual": 11.85,
+      "question": "What was Mastercard's operating margin (operating income as a percent of revenue) for the three months ended September 30, 2026, as reported in its 10-Q filed on October 29, 2026?",
+      "said": 58.5,
+      "actual": 59.77,
       "unit": "percent",
-      "source": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/"
+      "source": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000124/"
+    },
+    {
+      "model": "Claude Sonnet 5.5",
+      "mode": "plain",
+      "kind": "labeled guess",
+      "question": "What was Mastercard's revenue for the nine months ended September 30, 2026, as reported in its 10-Q filed on October 29, 2026?",
+      "said": 26900000000.0,
+      "actual": 27482000000.0,
+      "unit": "USD",
+      "source": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000124/"
+    },
+    {
+      "model": "Llama 3.2 3B (local)",
+      "mode": "plain",
+      "kind": "made up",
+      "question": "By what percent did Amazon's revenue for the three months ended September 30, 2026 change compared with the same period a year earlier, as reported in its 10-Q filed on October 30, 2026?",
+      "said": -3.2,
+      "actual": 12.09,
+      "unit": "percent",
+      "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/"
+    },
+    {
+      "model": "Llama 3.2 3B (local)",
+      "mode": "plain",
+      "kind": "made up",
+      "question": "What was Amazon's revenue for the nine months ended September 30, 2026, as reported in its 10-Q filed on October 30, 2026?",
+      "said": 497330000000.0,
+      "actual": 584069000000.0,
+      "unit": "USD",
+      "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/"
+    },
+    {
+      "model": "Llama 3.2 3B (local)",
+      "mode": "plain",
+      "kind": "made up",
+      "question": "What were Boeing's diluted earnings per share for the three months ended September 30, 2026, as reported in its 10-Q filed on October 27, 2026?",
+      "said": 1.03,
+      "actual": -0.26,
+      "unit": "USD/shares",
+      "source": "https://www.sec.gov/Archives/edgar/data/12927/000162828026067508/"
+    },
+    {
+      "model": "Mistral 7B (local)",
+      "mode": "plain",
+      "kind": "made up",
+      "question": "What were Amazon's diluted earnings per share for the three months ended September 30, 2026, as reported in its 10-Q filed on October 30, 2026?",
+      "said": 7.0,
+      "actual": 1.89,
+      "unit": "USD/shares",
+      "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/"
+    },
+    {
+      "model": "Mistral 7B (local)",
+      "mode": "plain",
+      "kind": "made up",
+      "question": "What was Amazon's net income for the three months ended September 30, 2026, as reported in its 10-Q filed on October 30, 2026?",
+      "said": 36400000000.0,
+      "actual": 20685000000.0,
+      "unit": "USD",
+      "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/"
+    },
+    {
+      "model": "Mistral 7B (local)",
+      "mode": "plain",
+      "kind": "made up",
+      "question": "What was Amazon's operating income for the three months ended September 30, 2026, as reported in its 10-Q filed on October 30, 2026?",
+      "said": 13400000000.0,
+      "actual": 28076000000.0,
+      "unit": "USD",
+      "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/"
+    },
+    {
+      "model": "Qwen3 8B (local)",
+      "mode": "plain",
+      "kind": "made up",
+      "question": "What was Amazon's operating margin (operating income as a percent of revenue) for the three months ended September 30, 2026, as reported in its 10-Q filed on October 30, 2026?",
+      "said": 18.8,
+      "actual": 13.9,
+      "unit": "percent",
+      "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/"
     },
     {
       "model": "Qwen3 8B (local)",
@@ -339,21 +658,11 @@
       "model": "Qwen3 8B (local)",
       "mode": "plain",
       "kind": "made up",
-      "question": "What were Johnson & Johnson's diluted earnings per share for the three months ended September 27, 2026, as reported in its 10-Q filed on October 21, 2026?",
-      "said": 2.74,
-      "actual": 0.09,
-      "unit": "USD/shares",
-      "source": "https://www.sec.gov/Archives/edgar/data/200406/000020040626000197/"
-    },
-    {
-      "model": "Qwen3 8B (local)",
-      "mode": "plain",
-      "kind": "made up",
-      "question": "By what percent did Coca-Cola's revenue for the three months ended October 2, 2026 change compared with the same period a year earlier, as reported in its 10-Q filed on October 28, 2026?",
-      "said": 5.2,
-      "actual": 7.43,
+      "question": "What was Intel's operating margin (operating income as a percent of revenue) for the three months ended September 26, 2026, as reported in its 10-Q filed on October 30, 2026?",
+      "said": 18.8,
+      "actual": 15.27,
       "unit": "percent",
-      "source": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/"
+      "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000191/"
     }
   ]
 }

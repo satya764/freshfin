@@ -22,7 +22,7 @@ class BuildResult:
     skipped: list[str]
 
 
-def build(edgar: Edgar, tickers: list[str], since: date, until: date, per_filing: int = 6) -> BuildResult:
+def build(edgar: Edgar, tickers: list[str], since: date, until: date, per_filing: int = 8) -> BuildResult:
     questions: list[Question] = []
     filings: list[dict] = []
     skipped: list[str] = []

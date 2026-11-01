@@ -19,11 +19,11 @@ def test_build_window_and_bad_ticker(tmp_path):
     result = build(FakeEdgar(), ["MSFT", "BAD"], date(2026, 7, 1), date(2026, 10, 31))
     forms = sorted((f["form"], f["filed"]) for f in result.filings)
     assert forms == [("10-K", "2026-07-29"), ("10-Q", "2026-10-28")]
-    assert len(result.questions) == 12
+    assert len(result.questions) == 16  # 8 per filing
     assert result.skipped == ["BAD: Unknown ticker BAD"]
     save_build(tmp_path, result, date(2026, 7, 1), date(2026, 10, 31), ["MSFT", "BAD"])
-    assert (tmp_path / "questions.jsonl").read_text().count("\n") == 12
-    assert '"questions": 12' in (tmp_path / "meta.json").read_text()
+    assert (tmp_path / "questions.jsonl").read_text().count("\n") == 16
+    assert '"questions": 16' in (tmp_path / "meta.json").read_text()
 
 
 def test_filings_between_filters_forms_and_dates():

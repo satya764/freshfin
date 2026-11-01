@@ -15,7 +15,7 @@ from typing import Literal
 from .edgar import Filing
 from .metrics import GROWTH_METRICS, METRICS, Metric, describe_period, fmt_date, months_between
 
-QuestionKind = Literal["lookup", "growth"]
+QuestionKind = Literal["lookup", "growth", "margin"]
 
 
 @dataclass(frozen=True)
@@ -94,16 +94,14 @@ def current_period_end(company_facts: dict, filing: Filing) -> date | None:
     return max(ends)
 
 
-def filing_facts(company_facts: dict, filing: Filing) -> list[Fact]:
-    """Facts first reported in this filing: tagged with its accession and ending on its current period.
-
-    For each metric only the first concept with data is used, and for duration metrics the
-    shortest period (the quarter, not year-to-date), since that is what headlines report.
-    """
+def period_facts(company_facts: dict, filing: Filing) -> dict[str, list[Fact]]:
+    """Every fact first reported in this filing, by metric: tagged with its accession and ending on its
+    current period. A 10-Q can tag the same metric for the quarter and for year-to-date; both are kept,
+    shortest period first. For each metric only the first concept with data is used."""
     end = current_period_end(company_facts, filing)
     if end is None:
-        return []
-    out = []
+        return {}
+    out: dict[str, list[Fact]] = {}
     for metric in METRICS.values():
         found: dict[date | None, Fact] = {}
         for concept, entry in _entries(company_facts, metric):
@@ -115,8 +113,14 @@ def filing_facts(company_facts: dict, filing: Filing) -> list[Fact]:
             if fact is not None:
                 found.setdefault(fact.start, fact)
         if found:
-            out.append(max(found.values(), key=lambda f: f.start or date.min))  # latest start = shortest period
+            out[metric.key] = sorted(found.values(), key=lambda f: f.start or date.min, reverse=True)
     return out
+
+
+def filing_facts(company_facts: dict, filing: Filing) -> list[Fact]:
+    """One fact per metric: the shortest period (the quarter, not year-to-date), since that is what
+    headlines report."""
+    return [facts[0] for facts in period_facts(company_facts, filing).values()]
 
 
 def prior_year_value(company_facts: dict, fact: Fact) -> float | None:
@@ -149,23 +153,40 @@ def _question_text(company: str, metric: Metric, fact: Fact, filing: Filing, kin
             f"By what percent did {company}'s {metric.label} {period} change compared with the same "
             f"period a year earlier, {source}?"
         )
+    if kind == "margin":
+        return f"What was {company}'s operating margin (operating income as a percent of revenue) {period}, {source}?"
     return f"What {metric.verb} {company}'s {metric.label} {period}, {source}?"
 
 
-def questions_for_filing(company_facts: dict, filing: Filing, company: str, per_filing: int = 6) -> list[Question]:
-    facts = filing_facts(company_facts, filing)
-    picked: list[tuple[QuestionKind, Fact, float, str]] = []
-    for fact in facts:
-        picked.append(("lookup", fact, fact.value, fact.unit))
+def questions_for_filing(company_facts: dict, filing: Filing, company: str, per_filing: int = 8) -> list[Question]:
+    """Lookups of the newest reported values, plus up to three harder questions:
+    year-over-year growth, a year-to-date value (easy to confuse with the quarter), and operating margin."""
+    by_metric = period_facts(company_facts, filing)
+    facts = [f[0] for f in by_metric.values()]
+    picked: list[tuple[QuestionKind, Fact, float, str]] = [("lookup", f, f.value, f.unit) for f in facts]
+
     growth = []
     for fact in facts:
         if fact.metric in GROWTH_METRICS:
             prior = prior_year_value(company_facts, fact)
             if prior:
                 growth.append(("growth", fact, round((fact.value - prior) / abs(prior) * 100, 2), "percent"))
-    # Keep one growth question in the mix when there's room, then fill with lookups in metric order.
-    lookups = picked[: max(per_filing - min(len(growth), 1), 0)]
-    chosen = lookups + growth[: per_filing - len(lookups)]
+
+    ytd = [
+        ("lookup", f[-1], f[-1].value, f[-1].unit)
+        for m in ("revenue", "net_income")
+        if len(f := by_metric.get(m, [])) > 1
+    ]
+
+    margin = []
+    revenue, operating = by_metric.get("revenue", [None])[0], by_metric.get("operating_income", [None])[0]
+    if revenue and operating and revenue.start == operating.start and revenue.value:
+        margin.append(("margin", operating, round(operating.value / revenue.value * 100, 2), "percent"))
+
+    # The harder questions first get a slot each; lookups fill the rest in metric order.
+    extras = growth[:1] + ytd[:1] + margin[:1]
+    lookups = picked[: max(per_filing - len(extras), 0)]
+    chosen = lookups + extras[: per_filing - len(lookups)]
 
     out = []
     for kind, fact, answer, unit in chosen:

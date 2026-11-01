@@ -88,3 +88,24 @@ def test_right_number_labeled_estimate_still_correct():
 def test_zero_for_a_nonzero_figure_is_a_placeholder():
     assert grade(q(92_279_000_000), '{"value": 0, "unit": "USD"}')[0] == "placeholder"
     assert grade(q(18.8, "percent"), '{"value": 0}')[0] == "placeholder"
+
+
+def test_number_in_a_sentence():
+    assert grade(q(36_629_000_000), "Net income was $36,629,000,000.")[0] == "correct"
+    assert grade(q(45_915_000_000), "Operating income was $45.515 billion.")[0] == "hallucinated"
+    assert grade(q(18.8, "percent"), "Revenue grew 18.8% from a year earlier.")[0] == "correct"
+
+
+def test_dates_in_a_sentence_are_not_answers():
+    assert grade(q(1e9), "For the quarter ended September 30, 2026 it rose.")[0] == "invalid"
+
+
+def test_more_refusals():
+    assert grade(q(1e9), "Can't answer that question.")[0] == "abstained"
+    assert grade(q(1e9), "Not enough information is available.")[0] == "abstained"
+
+
+def test_usd_written_out_in_a_sentence():
+    assert grade(q(20_685_000_000), "Net income was USD 20,685,000,000.")[0] == "correct"
+    assert grade(q(26_468_000_000), "Net income is 26,468,000,000 USD.")[0] == "correct"
+    assert grade(q(4.92, "USD/shares"), "Diluted EPS is USD 4.92")[0] == "correct"

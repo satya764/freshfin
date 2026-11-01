@@ -32,3 +32,19 @@ provider = "openai_compatible"
 base_url = "http://localhost:11434/v1"
 fresh_after = 2025-04-29  # released April 2025
 workers = 1
+
+[[model]]
+name = "llama3.2-16k"  # Ollama: llama3.2:3b with a 16K context
+label = "Llama 3.2 3B (local)"
+provider = "openai_compatible"
+base_url = "http://localhost:11434/v1"
+fresh_after = 2024-09-25  # released September 2024
+workers = 1
+
+[[model]]
+name = "mistral-16k"  # Ollama: mistral:7b with a 16K context
+label = "Mistral 7B (local)"
+provider = "openai_compatible"
+base_url = "http://localhost:11434/v1"
+fresh_after = 2024-05-22  # v0.3 released May 2024
+workers = 1

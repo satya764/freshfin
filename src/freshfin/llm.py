@@ -39,6 +39,32 @@ class Reply:
     tool_calls: list[ToolCall] = field(default_factory=list)
     input_tokens: int = 0
     output_tokens: int = 0
+    calls_from_text: bool = False  # the model typed its tool call as text instead of making a real call
+
+
+def text_tool_calls(text: str, tool_names: set[str]) -> list[ToolCall]:
+    """Tool calls a model wrote as JSON text, like [{"name": "get_reported_values", "arguments": {...}}].
+    Only the first JSON value is read; anything after it (often an invented tool response) is ignored."""
+    start = min((i for i in (text.find('[{"name"'), text.find('{"name"')) if i >= 0), default=-1)
+    if start < 0:
+        return []
+    try:
+        value, _ = json.JSONDecoder().raw_decode(text[start:])
+    except json.JSONDecodeError:
+        return []
+    items = value if isinstance(value, list) else [value]
+    calls = []
+    for item in items:
+        if not isinstance(item, dict) or item.get("name") not in tool_names:
+            continue
+        args = item.get("arguments", item.get("parameters", {}))
+        if isinstance(args, str):
+            try:
+                args = json.loads(args)
+            except json.JSONDecodeError:
+                args = {}
+        calls.append(ToolCall(f"call_{uuid.uuid4().hex[:12]}", item["name"], args if isinstance(args, dict) else {}))
+    return calls
 
 
 class Session(Protocol):
@@ -169,7 +195,13 @@ class OpenAISession:
                 except json.JSONDecodeError:
                     args = {}
             calls.append(ToolCall(call.get("id") or f"call_{uuid.uuid4().hex[:12]}", call["function"]["name"], args))
-        entry: dict[str, Any] = {"role": "assistant", "content": message.get("content") or ""}
+        content = message.get("content") or ""
+        from_text = False
+        if not calls and self.tools:
+            calls = text_tool_calls(content, {t["function"]["name"] for t in self.tools})
+            if calls:
+                from_text, content = True, ""  # drop the rest, which may be a made-up tool response
+        entry: dict[str, Any] = {"role": "assistant", "content": content}
         if calls:
             entry["tool_calls"] = [
                 {"id": c.id, "type": "function", "function": {"name": c.name, "arguments": json.dumps(c.args)}}
@@ -178,10 +210,11 @@ class OpenAISession:
         self.messages.append(entry)
         usage = data.get("usage") or {}
         return Reply(
-            text=(message.get("content") or "").strip(),
+            text=content.strip(),
             tool_calls=calls,
             input_tokens=usage.get("prompt_tokens", 0),
             output_tokens=usage.get("completion_tokens", 0),
+            calls_from_text=from_text,
         )
 
     def add_tool_results(self, results):
