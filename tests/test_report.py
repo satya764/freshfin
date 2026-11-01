@@ -59,7 +59,7 @@ def test_write_report(tmp_path):
     assert len(rows) == 1
     summary = json.loads((tmp_path / "summary.json").read_text())
     assert summary["examples"][0]["actual"] == 92_279_000_000
-    assert "Wrong numbers without tools" in (tmp_path / "docs" / "index.html").read_text()
+    assert "what the filing says" in (tmp_path / "docs" / "index.html").read_text()
 
 
 def test_cards_sum_every_kind_of_wrong_number():

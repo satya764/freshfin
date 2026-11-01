@@ -39,7 +39,7 @@ Answers in a sentence are read for a dollar amount or percent; tool calls typed 
 | Mistral 7B (local) | 40/67 | 9/13 | 5/13 | 0/11 |
 | Qwen3 8B (local) | 63/67 | 13/13 | 12/13 | 10/11 |
 
-## Wrong numbers without tools
+## Examples: what the model said vs. what the filing says
 
 | Model | Type | Question | Said | Filing says |
 | --- | --- | --- | --- | --- |

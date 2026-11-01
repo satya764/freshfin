@@ -223,7 +223,7 @@ def to_markdown(rows: list[Row], meta: dict, examples: list[dict], by_type: list
     if examples:
         lines += [
             "",
-            "## Wrong numbers without tools",
+            "## Examples: what the model said vs. what the filing says",
             "",
             "| Model | Type | Question | Said | Filing says |",
             "| --- | --- | --- | --- | --- |",
@@ -346,8 +346,8 @@ def to_html(rows: list[Row], meta: dict, examples: list[dict], updated: str, by_
             for x in examples
         )
         ex = (
-            "<h2>Wrong numbers without tools</h2><p>Answers given with no tools, where the model gave a number "
-            "instead of saying it didn't know. A labeled guess is one the model said was an estimate.</p>"
+            "<h2>Examples: what the model said vs. what the filing says</h2><p>Click a filing number to check it "
+            "on the SEC site. A labeled guess is a wrong number the model said was an estimate.</p>"
             '<div class="wrap"><table><tr><th>Model</th><th>Type</th><th>Question</th>'
             f"<th class=num>Said</th><th class=num>Filing says</th></tr>{items}</table></div>"
         )
