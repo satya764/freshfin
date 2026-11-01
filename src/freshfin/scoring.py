@@ -5,6 +5,7 @@ Outcomes:
   abstained    the model said it doesn't know (value null)
   hallucinated the model stated a wrong number as fact
   estimated    the model gave a wrong number but said it was an estimate or guess
+  placeholder  the model answered 0 for a figure that isn't 0: it didn't know, but filled in a number
   invalid      no readable answer
   error        the API call failed (not counted in rates)
 """
@@ -18,7 +19,7 @@ from typing import Literal
 
 from .questions import Question
 
-Outcome = Literal["correct", "abstained", "hallucinated", "estimated", "invalid", "error"]
+Outcome = Literal["correct", "abstained", "hallucinated", "estimated", "placeholder", "invalid", "error"]
 
 REL_TOLERANCE = 0.005  # amounts: within 0.5%
 EPS_TOLERANCE = 0.011  # per-share amounts: within about a cent
@@ -123,6 +124,8 @@ def grade(question: Question, text: str) -> tuple[Outcome, float | None, bool]:
     correct, rescaled = matches(question, parsed.value)
     if correct:
         return "correct", parsed.value, rescaled
+    if parsed.value == 0 and question.answer != 0:
+        return "placeholder", parsed.value, False
     if ESTIMATE_PATTERN.search(_strip_thinking(text or "")):
         return "estimated", parsed.value, False
     return "hallucinated", parsed.value, False

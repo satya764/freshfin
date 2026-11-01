@@ -34,7 +34,7 @@ def test_fmt_value():
 
 
 def test_markdown_and_html_escape():
-    row = Row("m", "Model <A>", "closed", 10, 50, 30, 20, 0, 0, 0, 71.4, 0.12, 1.0, 2.0)
+    row = Row("m", "Model <A>", "closed", 10, 50, 30, 20, 0, 0, 0, 0, 71.4, 0.12, 1.0, 2.0)
     meta = {"since": "2026-10-18", "until": "2026-11-01", "questions": 10, "filings": [{}]}
     md = to_markdown([row], meta, [])
     assert '| Model <A> | no tools, may say "don\'t know" | 50% | 30% | **20%** |' in md

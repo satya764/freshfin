@@ -83,3 +83,8 @@ def test_labeled_estimate_is_not_counted_as_made_up():
 
 def test_right_number_labeled_estimate_still_correct():
     assert grade(q(11.85, "percent"), 'An estimate: {"value": 11.9}')[0] == "correct"
+
+
+def test_zero_for_a_nonzero_figure_is_a_placeholder():
+    assert grade(q(92_279_000_000), '{"value": 0, "unit": "USD"}')[0] == "placeholder"
+    assert grade(q(18.8, "percent"), '{"value": 0}')[0] == "placeholder"

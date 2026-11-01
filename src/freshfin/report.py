@@ -23,6 +23,7 @@ class Row:
     abstained: float
     hallucinated: float
     estimated: float
+    placeholder: float
     invalid: float
     errors: int
     precision: float | None  # correct / answers given: how often a number it states is right
@@ -47,9 +48,9 @@ def summarize(records: list[Record], spec: ModelSpec, mode: str) -> Row | None:
     if not graded:
         return None
     n = len(graded)
-    outcomes = ("correct", "abstained", "hallucinated", "estimated", "invalid")
+    outcomes = ("correct", "abstained", "hallucinated", "estimated", "placeholder", "invalid")
     count = {o: sum(r.outcome == o for r in graded) for o in outcomes}
-    answered = count["correct"] + count["hallucinated"] + count["estimated"]
+    answered = count["correct"] + count["hallucinated"] + count["estimated"] + count["placeholder"]
     return Row(
         model=spec.name,
         label=spec.label,
@@ -59,6 +60,7 @@ def summarize(records: list[Record], spec: ModelSpec, mode: str) -> Row | None:
         abstained=_pct(count["abstained"], n),
         hallucinated=_pct(count["hallucinated"], n),
         estimated=_pct(count["estimated"], n),
+        placeholder=_pct(count["placeholder"], n),
         invalid=_pct(count["invalid"], n),
         errors=len(records) - n,
         precision=_pct(count["correct"], answered) if answered else None,
@@ -148,15 +150,15 @@ def to_markdown(rows: list[Row], meta: dict, examples: list[dict]) -> str:
         "",
         f"{meta['questions']} questions from {len(meta['filings'])} filings. Every answer is the filing's own XBRL value.",
         "",
-        '| Model | Mode | Correct | Said "don\'t know" | Made up a number | Labeled guess | Unreadable | Right when it answered | Cost | p95 |',
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        '| Model | Mode | Correct | Said "don\'t know" | Made up a number | Labeled guess | Filled in 0 | Unreadable | Right when it answered | Cost | p95 |',
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for r in _sort(rows):
         mode = MODE_LABELS.get(r.mode, r.mode)
         precision = f"{r.precision:.0f}%" if r.precision is not None else "–"
         lines.append(
             f"| {r.label} | {mode} | {r.correct:.0f}% | {r.abstained:.0f}% | **{r.hallucinated:.0f}%** | "
-            f"{r.estimated:.0f}% | {r.invalid:.0f}% | {precision} | ${r.cost_usd:.2f} | {r.p95_s:.1f} s |"
+            f"{r.estimated:.0f}% | {r.placeholder:.0f}% | {r.invalid:.0f}% | {precision} | ${r.cost_usd:.2f} | {r.p95_s:.1f} s |"
         )
     if examples:
         lines += [
@@ -205,7 +207,7 @@ footer {{ margin-top:40px; font-size:14px; color:var(--muted) }}
 <p>{intro}</p>
 <h2>Results</h2>
 <div class="wrap"><table>
-<tr><th>Model</th><th>Mode</th><th class="num">Correct</th><th class="num">Said "don't know"</th><th class="num">Made up a number</th><th class="num">Labeled guess</th><th class="num">Right when it answered</th><th class="num">Cost</th><th class="num">p95</th></tr>
+<tr><th>Model</th><th>Mode</th><th class="num">Correct</th><th class="num">Said "don't know"</th><th class="num">Made up a number</th><th class="num">Labeled guess</th><th class="num">Filled in 0</th><th class="num">Right when it answered</th><th class="num">Cost</th><th class="num">p95</th></tr>
 {rows}
 </table></div>
 {examples}
@@ -232,7 +234,7 @@ def to_html(rows: list[Row], meta: dict, examples: list[dict], updated: str) -> 
         body.append(
             f"<tr><td>{e(r.label)}</td><td>{mode}</td><td class=num>{r.correct:.0f}%</td>"
             f'<td class=num>{r.abstained:.0f}%</td><td class="num bad">{r.hallucinated:.0f}%</td>'
-            f"<td class=num>{r.estimated:.0f}%</td>"
+            f"<td class=num>{r.estimated:.0f}%</td><td class=num>{r.placeholder:.0f}%</td>"
             f"<td class=num>{precision}</td><td class=num>${r.cost_usd:.2f}</td><td class=num>{r.p95_s:.1f} s</td></tr>"
         )
     ex = ""
