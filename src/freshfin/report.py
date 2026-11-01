@@ -133,9 +133,9 @@ def fmt_value(value: float | None, unit: str) -> str:
 
 
 MODE_LABELS = {
-    "closed": 'no tools, may say "don\'t know"',
+    "closed": 'no tools, "don\'t know" OK',
     "plain": "no tools, plain question",
-    "tool": "with lookup tool",
+    "tool": "lookup tool",
 }
 MODE_ORDER = {"closed": 0, "plain": 1, "tool": 2}
 
@@ -194,7 +194,7 @@ p {{ color:var(--muted); margin:0 0 12px }}
 .wrap {{ overflow-x:auto; background:var(--card); border:1px solid var(--line); border-radius:12px }}
 table {{ border-collapse:collapse; width:100%; font-size:13px }}
 th, td {{ text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top }}
-td.mode {{ white-space:nowrap }}
+td.mode, td.model {{ white-space:nowrap }}
 .cards {{ display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px; margin:24px 0 8px }}
 .card {{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px }}
 .card h3 {{ font-size:15px; margin:0 0 10px }}
@@ -202,7 +202,9 @@ td.mode {{ white-space:nowrap }}
 .stat b {{ color:var(--fg); font-variant-numeric:tabular-nums }}
 .stat b.bad {{ color:var(--accent) }}
 th {{ color:var(--muted); font-weight:600 }}
-td.num, th.num {{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums }}
+td.num, th.num {{ text-align:right; font-variant-numeric:tabular-nums }}
+td.num {{ white-space:nowrap }}
+th {{ vertical-align:bottom }}
 .bad {{ color:var(--accent); font-weight:700 }}
 a {{ color:inherit }}
 footer {{ margin-top:40px; font-size:14px; color:var(--muted) }}
@@ -215,7 +217,7 @@ footer {{ margin-top:40px; font-size:14px; color:var(--muted) }}
 <div class="cards">{cards}</div>
 <h2>Results</h2>
 <div class="wrap"><table>
-<tr><th>Model</th><th>Mode</th><th class="num">Correct</th><th class="num">Said "don't know"</th><th class="num">Made up a number</th><th class="num">Labeled guess</th><th class="num">Filled in 0</th><th class="num">Right when it answered</th><th class="num">Cost</th><th class="num">p95</th></tr>
+<tr><th>Model</th><th>Mode</th><th class="num">Correct</th><th class="num">Don't know</th><th class="num">Made up</th><th class="num">Labeled guess</th><th class="num">Filled in 0</th><th class="num">Right when answered</th><th class="num">Cost</th><th class="num">p95</th></tr>
 {rows}
 </table></div>
 {examples}
@@ -269,7 +271,7 @@ def to_html(rows: list[Row], meta: dict, examples: list[dict], updated: str) -> 
         mode = e(MODE_LABELS.get(r.mode, r.mode))
         precision = f"{r.precision:.0f}%" if r.precision is not None else "–"
         body.append(
-            f"<tr><td>{e(r.label)}</td><td class=mode>{mode}</td><td class=num>{r.correct:.0f}%</td>"
+            f"<tr><td class=model>{e(r.label)}</td><td class=mode>{mode}</td><td class=num>{r.correct:.0f}%</td>"
             f'<td class=num>{r.abstained:.0f}%</td><td class="num bad">{r.hallucinated:.0f}%</td>'
             f"<td class=num>{r.estimated:.0f}%</td><td class=num>{r.placeholder:.0f}%</td>"
             f"<td class=num>{precision}</td><td class=num>${r.cost_usd:.2f}</td><td class=num>{r.p95_s:.1f} s</td></tr>"
