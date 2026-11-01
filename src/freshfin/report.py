@@ -187,13 +187,20 @@ PAGE = """<!doctype html>
 @media (prefers-color-scheme: dark) {{ :root {{ --bg:#141a26; --fg:#f5f3ee; --muted:#b8c2d3; --line:#2b3447; --accent:#f08a3c; --card:#1e2738; }} }}
 * {{ box-sizing:border-box }}
 body {{ margin:0; background:var(--bg); color:var(--fg); font:16px/1.5 -apple-system, system-ui, "Segoe UI", sans-serif }}
-main {{ max-width:1000px; margin:0 auto; padding:48px 16px }}
+main {{ max-width:1160px; margin:0 auto; padding:48px 16px }}
 h1 {{ font-size:36px; line-height:1.15; margin:0 0 8px }}
 h2 {{ font-size:22px; margin:40px 0 12px }}
 p {{ color:var(--muted); margin:0 0 12px }}
 .wrap {{ overflow-x:auto; background:var(--card); border:1px solid var(--line); border-radius:12px }}
-table {{ border-collapse:collapse; width:100%; font-size:14px }}
-th, td {{ text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top }}
+table {{ border-collapse:collapse; width:100%; font-size:13px }}
+th, td {{ text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top }}
+td.mode {{ white-space:nowrap }}
+.cards {{ display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px; margin:24px 0 8px }}
+.card {{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px }}
+.card h3 {{ font-size:15px; margin:0 0 10px }}
+.stat {{ display:flex; justify-content:space-between; gap:12px; font-size:14px; padding:4px 0; color:var(--muted) }}
+.stat b {{ color:var(--fg); font-variant-numeric:tabular-nums }}
+.stat b.bad {{ color:var(--accent) }}
 th {{ color:var(--muted); font-weight:600 }}
 td.num, th.num {{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums }}
 .bad {{ color:var(--accent); font-weight:700 }}
@@ -205,6 +212,7 @@ footer {{ margin-top:40px; font-size:14px; color:var(--muted) }}
 <main>
 <h1>How often do AI models make up financial numbers?</h1>
 <p>{intro}</p>
+<div class="cards">{cards}</div>
 <h2>Results</h2>
 <div class="wrap"><table>
 <tr><th>Model</th><th>Mode</th><th class="num">Correct</th><th class="num">Said "don't know"</th><th class="num">Made up a number</th><th class="num">Labeled guess</th><th class="num">Filled in 0</th><th class="num">Right when it answered</th><th class="num">Cost</th><th class="num">p95</th></tr>
@@ -216,6 +224,35 @@ footer {{ margin-top:40px; font-size:14px; color:var(--muted) }}
 </body>
 </html>
 """
+
+
+def _wrong(row: Row | None) -> float | None:
+    """Share of answers that put a wrong number on the record: made up, labeled guess or a placeholder 0."""
+    return None if row is None else round(row.hallucinated + row.estimated + row.placeholder, 1)
+
+
+def cards_html(rows: list[Row]) -> str:
+    e = html.escape
+    by_model: dict[str, dict[str, Row]] = {}
+    for r in rows:
+        by_model.setdefault(r.label, {})[r.mode] = r
+    out = []
+    for label, modes in by_model.items():
+        stats = []
+        for mode, name in (
+            ("closed", 'Wrong numbers, "don\'t know" allowed'),
+            ("plain", "Wrong numbers, plain question"),
+        ):
+            w = _wrong(modes.get(mode))
+            if w is not None:
+                cls = ' class="bad"' if w > 0 else ""
+                stats.append(f"<div class=stat><span>{e(name)}</span><b{cls}>{w:.0f}%</b></div>")
+        if "tool" in modes:
+            stats.append(
+                f"<div class=stat><span>Correct with lookup tool</span><b>{modes['tool'].correct:.0f}%</b></div>"
+            )
+        out.append(f"<div class=card><h3>{e(label)}</h3>{''.join(stats)}</div>")
+    return "".join(out)
 
 
 def to_html(rows: list[Row], meta: dict, examples: list[dict], updated: str) -> str:
@@ -232,7 +269,7 @@ def to_html(rows: list[Row], meta: dict, examples: list[dict], updated: str) -> 
         mode = e(MODE_LABELS.get(r.mode, r.mode))
         precision = f"{r.precision:.0f}%" if r.precision is not None else "–"
         body.append(
-            f"<tr><td>{e(r.label)}</td><td>{mode}</td><td class=num>{r.correct:.0f}%</td>"
+            f"<tr><td>{e(r.label)}</td><td class=mode>{mode}</td><td class=num>{r.correct:.0f}%</td>"
             f'<td class=num>{r.abstained:.0f}%</td><td class="num bad">{r.hallucinated:.0f}%</td>'
             f"<td class=num>{r.estimated:.0f}%</td><td class=num>{r.placeholder:.0f}%</td>"
             f"<td class=num>{precision}</td><td class=num>${r.cost_usd:.2f}</td><td class=num>{r.p95_s:.1f} s</td></tr>"
@@ -250,7 +287,7 @@ def to_html(rows: list[Row], meta: dict, examples: list[dict], updated: str) -> 
             '<div class="wrap"><table><tr><th>Model</th><th>Type</th><th>Question</th>'
             f"<th class=num>Said</th><th class=num>Filing says</th></tr>{items}</table></div>"
         )
-    return PAGE.format(intro=e(intro), rows="\n".join(body), examples=ex, updated=e(updated))
+    return PAGE.format(intro=e(intro), cards=cards_html(rows), rows="\n".join(body), examples=ex, updated=e(updated))
 
 
 def write_report(run_dir: Path, models: dict[str, ModelSpec], pages_dir: Path | None, updated: str) -> list[Row]:

@@ -60,3 +60,12 @@ def test_write_report(tmp_path):
     summary = json.loads((tmp_path / "summary.json").read_text())
     assert summary["examples"][0]["actual"] == 92_279_000_000
     assert "Wrong numbers without tools" in (tmp_path / "docs" / "index.html").read_text()
+
+
+def test_cards_sum_every_kind_of_wrong_number():
+    from freshfin.report import cards_html
+
+    plain = Row("q", "Qwen", "plain", 78, 0, 9, 9, 0, 77, 5, 0, 0.0, 0.0, 1.0, 2.0)
+    tool = Row("q", "Qwen", "tool", 78, 94, 4, 1, 0, 0, 1, 0, 99.0, 0.0, 1.0, 2.0)
+    page = cards_html([plain, tool])
+    assert '<b class="bad">86%</b>' in page and "<b>94%</b>" in page
