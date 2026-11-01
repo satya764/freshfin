@@ -1,0 +1,288 @@
+{
+  "meta": {
+    "since": "2026-10-17",
+    "until": "2026-10-31",
+    "tickers": [
+      "AAPL",
+      "MSFT",
+      "NVDA",
+      "AMZN",
+      "GOOGL",
+      "META",
+      "TSLA",
+      "AVGO",
+      "ORCL",
+      "CRM",
+      "ADBE",
+      "AMD",
+      "INTC",
+      "CSCO",
+      "QCOM",
+      "NFLX",
+      "V",
+      "MA",
+      "WMT",
+      "COST",
+      "HD",
+      "NKE",
+      "MCD",
+      "DIS",
+      "PG",
+      "KO",
+      "PEP",
+      "JNJ",
+      "LLY",
+      "MRK",
+      "ABBV",
+      "UNH",
+      "XOM",
+      "CVX",
+      "CAT",
+      "BA"
+    ],
+    "filings": [
+      {
+        "ticker": "MSFT",
+        "form": "10-Q",
+        "filed": "2026-10-28",
+        "accession": "0001193125-26-436133",
+        "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/",
+        "questions": 6
+      },
+      {
+        "ticker": "AMZN",
+        "form": "10-Q",
+        "filed": "2026-10-30",
+        "accession": "0001018724-26-000040",
+        "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/",
+        "questions": 6
+      },
+      {
+        "ticker": "GOOGL",
+        "form": "10-Q",
+        "filed": "2026-10-29",
+        "accession": "0001652044-26-000084",
+        "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/",
+        "questions": 6
+      },
+      {
+        "ticker": "META",
+        "form": "10-Q",
+        "filed": "2026-10-22",
+        "accession": "0001628280-26-066773",
+        "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/",
+        "questions": 6
+      },
+      {
+        "ticker": "TSLA",
+        "form": "10-Q",
+        "filed": "2026-10-22",
+        "accession": "0001628280-26-066775",
+        "url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/",
+        "questions": 6
+      },
+      {
+        "ticker": "INTC",
+        "form": "10-Q",
+        "filed": "2026-10-30",
+        "accession": "0000050863-26-000191",
+        "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000191/",
+        "questions": 6
+      },
+      {
+        "ticker": "NFLX",
+        "form": "10-Q",
+        "filed": "2026-10-21",
+        "accession": "0001065280-26-000291",
+        "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/",
+        "questions": 6
+      },
+      {
+        "ticker": "MA",
+        "form": "10-Q",
+        "filed": "2026-10-29",
+        "accession": "0001141391-26-000124",
+        "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000124/",
+        "questions": 6
+      },
+      {
+        "ticker": "PG",
+        "form": "10-Q",
+        "filed": "2026-10-22",
+        "accession": "0000080424-26-000256",
+        "url": "https://www.sec.gov/Archives/edgar/data/80424/000008042426000256/",
+        "questions": 6
+      },
+      {
+        "ticker": "KO",
+        "form": "10-Q",
+        "filed": "2026-10-28",
+        "accession": "0001628280-26-067844",
+        "url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/",
+        "questions": 6
+      },
+      {
+        "ticker": "JNJ",
+        "form": "10-Q",
+        "filed": "2026-10-21",
+        "accession": "0000200406-26-000197",
+        "url": "https://www.sec.gov/Archives/edgar/data/200406/000020040626000197/",
+        "questions": 6
+      },
+      {
+        "ticker": "LLY",
+        "form": "10-Q",
+        "filed": "2026-10-29",
+        "accession": "0000059478-26-000108",
+        "url": "https://www.sec.gov/Archives/edgar/data/59478/000005947826000108/",
+        "questions": 6
+      },
+      {
+        "ticker": "BA",
+        "form": "10-Q",
+        "filed": "2026-10-27",
+        "accession": "0001628280-26-067508",
+        "url": "https://www.sec.gov/Archives/edgar/data/12927/000162828026067508/",
+        "questions": 6
+      }
+    ],
+    "skipped": [],
+    "questions": 78
+  },
+  "rows": [
+    {
+      "model": "claude-haiku-5-5",
+      "label": "Claude Haiku 5.5",
+      "mode": "closed",
+      "questions": 78,
+      "correct": 0.0,
+      "abstained": 100.0,
+      "hallucinated": 0.0,
+      "estimated": 0.0,
+      "invalid": 0.0,
+      "errors": 0,
+      "precision": null,
+      "cost_usd": 0.0056,
+      "p50_s": 1.0,
+      "p95_s": 1.7
+    },
+    {
+      "model": "claude-haiku-5-5",
+      "label": "Claude Haiku 5.5",
+      "mode": "plain",
+      "questions": 78,
+      "correct": 0.0,
+      "abstained": 100.0,
+      "hallucinated": 0.0,
+      "estimated": 0.0,
+      "invalid": 0.0,
+      "errors": 0,
+      "precision": null,
+      "cost_usd": 0.012,
+      "p50_s": 1.9,
+      "p95_s": 2.5
+    },
+    {
+      "model": "claude-haiku-5-5",
+      "label": "Claude Haiku 5.5",
+      "mode": "tool",
+      "questions": 78,
+      "correct": 100.0,
+      "abstained": 0.0,
+      "hallucinated": 0.0,
+      "estimated": 0.0,
+      "invalid": 0.0,
+      "errors": 0,
+      "precision": 100.0,
+      "cost_usd": 0.0258,
+      "p50_s": 1.8,
+      "p95_s": 3.3
+    },
+    {
+      "model": "claude-sonnet-5-5",
+      "label": "Claude Sonnet 5.5",
+      "mode": "closed",
+      "questions": 78,
+      "correct": 0.0,
+      "abstained": 100.0,
+      "hallucinated": 0.0,
+      "estimated": 0.0,
+      "invalid": 0.0,
+      "errors": 0,
+      "precision": null,
+      "cost_usd": 0.0869,
+      "p50_s": 1.5,
+      "p95_s": 2.0
+    },
+    {
+      "model": "claude-sonnet-5-5",
+      "label": "Claude Sonnet 5.5",
+      "mode": "plain",
+      "questions": 78,
+      "correct": 0.0,
+      "abstained": 97.4,
+      "hallucinated": 0.0,
+      "estimated": 2.6,
+      "invalid": 0.0,
+      "errors": 0,
+      "precision": 0.0,
+      "cost_usd": 0.2037,
+      "p50_s": 2.4,
+      "p95_s": 4.1
+    },
+    {
+      "model": "claude-sonnet-5-5",
+      "label": "Claude Sonnet 5.5",
+      "mode": "tool",
+      "questions": 78,
+      "correct": 100.0,
+      "abstained": 0.0,
+      "hallucinated": 0.0,
+      "estimated": 0.0,
+      "invalid": 0.0,
+      "errors": 0,
+      "precision": 100.0,
+      "cost_usd": 0.5948,
+      "p50_s": 4.1,
+      "p95_s": 7.2
+    },
+    {
+      "model": "qwen3-16k",
+      "label": "Qwen3 8B (local)",
+      "mode": "closed",
+      "questions": 11,
+      "correct": 0.0,
+      "abstained": 100.0,
+      "hallucinated": 0.0,
+      "estimated": 0.0,
+      "invalid": 0.0,
+      "errors": 0,
+      "precision": null,
+      "cost_usd": 0.0,
+      "p50_s": 14.7,
+      "p95_s": 20.4
+    }
+  ],
+  "examples": [
+    {
+      "model": "Claude Sonnet 5.5",
+      "mode": "plain",
+      "kind": "labeled guess",
+      "question": "By what percent did Eli Lilly's revenue for the three months ended September 30, 2026 change compared with the same period a year earlier, as reported in its 10-Q filed on October 29, 2026?",
+      "said": 25.0,
+      "actual": 38.61,
+      "unit": "percent",
+      "source": "https://www.sec.gov/Archives/edgar/data/59478/000005947826000108/"
+    },
+    {
+      "model": "Claude Sonnet 5.5",
+      "mode": "plain",
+      "kind": "labeled guess",
+      "question": "By what percent did Netflix's revenue for the three months ended September 30, 2026 change compared with the same period a year earlier, as reported in its 10-Q filed on October 21, 2026?",
+      "said": 13.5,
+      "actual": 11.85,
+      "unit": "percent",
+      "source": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/"
+    }
+  ]
+}

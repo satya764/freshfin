@@ -1,0 +1,45 @@
+"""Default companies: large US companies across sectors, with fiscal years ending in different months,
+so most weeks of the year bring new filings."""
+
+COMPANIES: dict[str, str] = {
+    "AAPL": "Apple",
+    "MSFT": "Microsoft",
+    "NVDA": "NVIDIA",
+    "AMZN": "Amazon",
+    "GOOGL": "Alphabet",
+    "META": "Meta",
+    "TSLA": "Tesla",
+    "AVGO": "Broadcom",
+    "ORCL": "Oracle",
+    "CRM": "Salesforce",
+    "ADBE": "Adobe",
+    "AMD": "AMD",
+    "INTC": "Intel",
+    "CSCO": "Cisco",
+    "QCOM": "Qualcomm",
+    "NFLX": "Netflix",
+    "V": "Visa",
+    "MA": "Mastercard",
+    "WMT": "Walmart",
+    "COST": "Costco",
+    "HD": "Home Depot",
+    "NKE": "Nike",
+    "MCD": "McDonald's",
+    "DIS": "Disney",
+    "PG": "Procter & Gamble",
+    "KO": "Coca-Cola",
+    "PEP": "PepsiCo",
+    "JNJ": "Johnson & Johnson",
+    "LLY": "Eli Lilly",
+    "MRK": "Merck",
+    "ABBV": "AbbVie",
+    "UNH": "UnitedHealth Group",
+    "XOM": "Exxon Mobil",
+    "CVX": "Chevron",
+    "CAT": "Caterpillar",
+    "BA": "Boeing",
+}
+
+
+def display_name(ticker: str) -> str:
+    return COMPANIES.get(ticker.upper(), ticker.upper())

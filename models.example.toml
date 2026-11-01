@@ -1,0 +1,34 @@
+# Models to benchmark. Copy to models.toml and edit.
+#
+# fresh_after: the last date whose filings might be in the model's training data.
+# Questions from filings on or before it are skipped for that model, so every model
+# is only asked about reports it can't have seen. Use the later of the model's
+# training cutoff and, when the cutoff isn't published, its release date.
+#
+# Prices are USD per million tokens. Check the provider's pricing page before trusting cost numbers.
+
+[[model]]
+name = "claude-haiku-5-5"
+label = "Claude Haiku 5.5"
+provider = "anthropic"
+price_in = 0.10
+price_out = 0.50
+fresh_after = 2026-06-30  # knowledge cutoff June 2026
+workers = 4
+
+[[model]]
+name = "claude-sonnet-5-5"
+label = "Claude Sonnet 5.5"
+provider = "anthropic"
+price_in = 2.00
+price_out = 10.00
+fresh_after = 2026-09-28  # cutoff not confirmed; released late September 2026
+workers = 4
+
+[[model]]
+name = "qwen3-16k"  # Ollama: qwen3:8b with a 16K context (see README)
+label = "Qwen3 8B (local)"
+provider = "openai_compatible"
+base_url = "http://localhost:11434/v1"
+fresh_after = 2025-04-29  # released April 2025
+workers = 1

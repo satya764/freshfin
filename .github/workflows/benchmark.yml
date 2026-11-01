@@ -1,0 +1,53 @@
+name: Benchmark
+
+# Runs on demand, and every Monday once the repo variable FRESHFIN_SCHEDULE is set to "on".
+# Needs the repo variable SEC_USER_AGENT ("Name email") and the secret ANTHROPIC_API_KEY.
+# Each run costs about a dollar with the default budget below.
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Filings from the last N days"
+        default: "7"
+      models:
+        description: "Models from models.example.toml"
+        default: "claude-haiku-5-5,claude-sonnet-5-5"
+      max_cost:
+        description: "Budget per model and mode, USD"
+        default: "0.50"
+  schedule:
+    - cron: "17 14 * * 1"
+
+permissions:
+  contents: write
+
+jobs:
+  benchmark:
+    if: github.event_name == 'workflow_dispatch' || vars.FRESHFIN_SCHEDULE == 'on'
+    runs-on: ubuntu-latest
+    env:
+      SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      MODELS_FILE: models.example.toml
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --no-dev
+      - name: Build, run, report
+        run: |
+          RUN="results/$(date -u +%F)"
+          if ! uv run freshfin build --days "${{ inputs.days || '7' }}" --out "$RUN"; then
+            echo "No new filings with XBRL data this week."
+            exit 0
+          fi
+          uv run freshfin run "$RUN" --models "${{ inputs.models || 'claude-haiku-5-5,claude-sonnet-5-5' }}" \
+            --max-cost "${{ inputs.max_cost || '0.50' }}"
+          uv run freshfin report "$RUN"
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results docs
+          git diff --cached --quiet || git commit -m "Benchmark results $(date -u +%F)"
+          git push
