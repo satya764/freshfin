@@ -8,3 +8,4 @@ data/
 .ruff_cache/
 .coverage
 .DS_Store
+.taste-skill/
