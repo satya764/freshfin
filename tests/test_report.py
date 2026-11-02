@@ -31,6 +31,7 @@ def test_fmt_value():
     assert fmt_value(4.92, "USD/shares") == "$4.92"
     assert fmt_value(18.8, "percent") == "18.80%"
     assert fmt_value(None, "USD") == "–"
+    assert fmt_value(-0.26, "USD/shares") == "−$0.26"
 
 
 def test_markdown_and_html_escape():
@@ -80,3 +81,13 @@ def test_question_types():
     }
     kinds = {question_type(q) for q in qs.values()}
     assert {"latest value", "growth", "margin"} <= kinds
+
+
+def test_headline_names_the_biggest_jump():
+    from freshfin.report import headline_text
+
+    closed = Row("q", "Qwen", "closed", 78, 0, 100, 0, 0, 0, 0, 0, None, 0.0, 1.0, 2.0)
+    plain = Row("q", "Qwen", "plain", 78, 0, 9, 9, 0, 77, 5, 0, 0.0, 0.0, 1.0, 2.0)
+    title, sub = headline_text([closed, plain])
+    assert title == "One sentence decides whether AI makes up numbers."
+    assert "Qwen" in sub and "86%" in sub and "0%" in sub
