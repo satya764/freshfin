@@ -126,7 +126,8 @@ uv run freshfin report results/2026-11-01                  # leaderboard.md, sum
 
 Useful options: `build --tickers AAPL MSFT`, `run --models qwen3-16k --modes closed,plain --limit 10`,
 `run --restart` to ask again instead of resuming. Runs resume: stop with Ctrl+C and run the same command
-again. Failed API calls are retried on the next run.
+again. Failed API calls are retried on the next run. `--max-cost` is checked before each question, so with
+several workers a run can go over it by the cost of the questions already in flight (a few cents on Claude).
 
 Local models work through any OpenAI-compatible endpoint. For Ollama:
 

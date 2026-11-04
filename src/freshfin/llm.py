@@ -9,6 +9,7 @@ A session keeps its own message history in its provider's format:
 
 from __future__ import annotations
 
+import http.client
 import json
 import time
 import urllib.error
@@ -89,7 +90,8 @@ def post_json(url: str, body: dict, headers: dict[str, str], timeout: float, ret
                 time.sleep(2 ** (attempt + 1))
                 continue
             raise LLMError(f"HTTP {err.code}: {detail}") from None
-        except (urllib.error.URLError, TimeoutError) as err:
+        except (urllib.error.URLError, TimeoutError, ConnectionError, http.client.HTTPException) as err:
+            # ConnectionError and HTTPException: the server dropped the connection mid-reply
             if attempt < retries - 1:
                 time.sleep(2 ** (attempt + 1))
                 continue

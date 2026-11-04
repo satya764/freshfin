@@ -78,6 +78,13 @@ def test_api_error_is_recorded():
     assert record.outcome == "error" and "529" in record.error
 
 
+def test_unexpected_error_is_recorded_not_raised():
+    # A dropped connection or a malformed reply is an error record, so the rest of the run continues.
+    client = ScriptedClient(lambda user, tools: [ConnectionResetError("peer reset")])
+    record = ask(client, SPEC, questions()[0], "closed", None, TODAY)
+    assert record.outcome == "error" and "ConnectionResetError" in record.error
+
+
 def test_fact_lookup_newest_first_without_duplicates():
     result = lookup()("msft", "revenue")
     values = result["values"]

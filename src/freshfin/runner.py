@@ -171,7 +171,10 @@ def ask(
                 calls.append(entry)
                 results.append((call.id, json.dumps(result)))
             session.add_tool_results(results)
-    except LLMError as err:
+    except Exception as err:  # one bad reply (dropped connection, broken JSON) must not stop the whole run
+        error = str(err) if isinstance(err, LLMError) else f"{type(err).__name__}: {err}"
+        if not isinstance(err, LLMError):
+            log.warning("%s %s %s: %s", spec.name, mode, question.id, error)
         return Record(
             question.id,
             spec.name,
@@ -185,7 +188,7 @@ def ask(
             tokens_out,
             spec.cost(tokens_in, tokens_out),
             _ms(started),
-            str(err)[:500],
+            error[:500],
         )
 
     outcome, value, rescaled = grade(question, text)
